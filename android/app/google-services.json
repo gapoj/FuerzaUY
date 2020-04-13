@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "198524574376",
+    "firebase_url": "https://fuerzauy-c7e52.firebaseio.com",
+    "project_id": "fuerzauy-c7e52",
+    "storage_bucket": "fuerzauy-c7e52.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:198524574376:android:d3f1734a5f4b93640b409d",
+        "android_client_info": {
+          "package_name": "com.fuerzauy.fuerzauy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "198524574376-etd5ngr81a55j5k6kdmkv55rjan6jmkd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fuerzauy.fuerzauy",
+            "certificate_hash": "91b3fbb73313ec3bb880d27622b4780da7491c08"
+          }
+        },
+        {
+          "client_id": "198524574376-09vc2hfipg1k11ju2d813q9ajdlvposc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAf_lkXFtpWz8h6OleRpDNu-ZABcZZ7SHE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "198524574376-09vc2hfipg1k11ju2d813q9ajdlvposc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "198524574376-j2vsd571t11vkqjqd9l64qcgru7mvuiq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fuerzauy.fuerzauy"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
