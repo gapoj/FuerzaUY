@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Proyecto Fuerza Uruguay">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="FuerzaUY">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+
+  <!-- Firebase Auth -->
+  <meta name="google-signin-client_id" content="198524574376-09vc2hfipg1k11ju2d813q9ajdlvposc.apps.googleusercontent.com" />
+  <title>Fuerza Uruguay</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <!-- This script installs service_worker.js to provide PWA functionality to
+       application. For more information, see:
+       https://developers.google.com/web/fundamentals/primers/service-workers -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+  </script>
+  <!-- Firebase JS SDK -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-storage.js"></script>
+  <!-- <script src="https://www.gstatic.com/firebasejs/7.14.0/firebase-analytics.js"></script> -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBVZpQrFfj-D3IrQWFaR_zdsO7cTNERiao",
+      authDomain: "fuerzauy-c7e52.firebaseapp.com",
+      databaseURL: "https://fuerzauy-c7e52.firebaseio.com",
+      projectId: "fuerzauy-c7e52",
+      storageBucket: "fuerzauy-c7e52.appspot.com",
+      messagingSenderId: "198524574376",
+      appId: "1:198524574376:web:6a542ff902e895f40b409d",
+      measurementId: "G-VHYQ0PFQ3Q"
+    };
+    firebase.initializeApp(firebaseConfig);
+    // firebase.analytics();
+  </script>
+  <!-- End Firebase JS SDK -->
+  <script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>
