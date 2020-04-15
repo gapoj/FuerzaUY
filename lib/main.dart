@@ -1,5 +1,6 @@
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
 ///import 'package:firebase_auth/firebase_auth.dart';
 import 'login_page.dart';
 
@@ -9,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Login',
+      title: 'Fuerza Uruguay',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
