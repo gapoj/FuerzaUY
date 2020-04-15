@@ -54,5 +54,9 @@
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Necesitamos acceso a las fotos para poder subirlas</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Necesitamos acceso a la cámara para sacar fotos y luego subirlas</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Necesitamos el micrófono para grabar audios</string>
 </dict>
 </plist>
