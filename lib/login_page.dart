@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fuerzauy/user.dart';
+import 'package:fuerzauy/user_base.dart';
+import 'package:fuerzauy/user_profile_page.dart';
 import 'sign_in.dart';
 import 'first_screen.dart';
 
@@ -36,13 +39,20 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () {
         signInWithGoogle().whenComplete(() {
           if (name != null) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return FirstScreen();
-                },
-              ),
-            );
+            checkUser(id).whenComplete(() {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    if(user!=null){
+                      return FirstScreen();
+
+                    }else {
+                      return UserProfilePage();
+                    }
+                  },
+                ),
+              );
+            });
           }
         });
       },
@@ -71,4 +81,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+
 }

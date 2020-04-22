@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:fuerzauy/Common/UploadImage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase/firebase.dart' as fb;
-import 'package:image_picker_web/image_picker_web.dart';
+//import 'package:image_picker_web/image_picker_web.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UploadImageWeb implements UploadImage {
+/*class UploadImageWeb implements UploadImage {
   static Uint8List imagebytes;
 
   Future<Widget> chooseFile() async {
@@ -42,4 +42,4 @@ class UploadImageWeb implements UploadImage {
   }
 }
 
-UploadImage getUploadImage() => UploadImageWeb();
+UploadImage getUploadImage() => UploadImageWeb();*/
