@@ -18,8 +18,7 @@ dependencies:
   cloud_firestore: ^0.13.5
   image_picker: ^0.6.5
   fluttertoast: ^3.1.0
-  video_player:
-  
+
   uuid: 2.0.4
 
 
