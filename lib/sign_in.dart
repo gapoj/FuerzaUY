@@ -8,6 +8,7 @@ String email;
 String imageUrl;
 String id;
 String fullName;
+String userRole;
 
 Future<String> signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
@@ -27,6 +28,7 @@ Future<String> signInWithGoogle() async {
   assert(user.email != null);
   assert(user.displayName != null);
   assert(user.photoUrl != null);
+
 
 
   id = user.uid;

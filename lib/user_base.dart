@@ -60,3 +60,22 @@ User user;
 
   }
 
+  Future listadolXDepartamento( String pDepartamento)async{
+    try {
+
+      var userData =await _usersCollectionReference.where('departamento', isEqualTo: pDepartamento).getDocuments() ;
+      List<DocumentSnapshot> templist;
+      List<Map<dynamic, dynamic>> list = new List();
+      templist = userData.documents;
+      list = templist.map((DocumentSnapshot docSnapshot){
+        //user= User.fromMap(docSnapshot.data);
+        return docSnapshot.data;
+      }).toList();
+      //list.add(user.toMap());
+      return list;
+
+    }catch(e){
+      return e;
+    }
+  }
+

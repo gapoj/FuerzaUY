@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/Common/UploadImage.dart';
+import 'package:fuerzauy/feed_page.dart';
+
+import 'first_screen.dart';
 
 class UploadPage extends StatefulWidget {
   @override
@@ -17,6 +20,19 @@ class UploadPageState extends State<UploadPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Firestore File Upload'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return FirstScreen();
+                })
+            );
+            
+            
+          },
+        ),
       ),
       body: Center(
         child: Column(
