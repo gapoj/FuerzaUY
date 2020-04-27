@@ -46,5 +46,7 @@ class User{
     };
   }
 
-
+  String getImageUrl(){
+    return imageUrl;
+  }
 }

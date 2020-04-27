@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,24 +38,26 @@ class _LoginPageState extends State<LoginPage> {
     return OutlineButton(
       splashColor: Colors.grey,
       onPressed: () {
-        signInWithGoogle().whenComplete(() {
-          if (name != null) {
-            checkUser(id).whenComplete(() {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    if(user!=null){
-                      return FirstScreen();
 
-                    }else {
-                      return UserProfilePage();
-                    }
-                  },
-                ),
-              );
-            });
-          }
-        });
+          signInWithGoogle().whenComplete(() {
+            if (name != null) {
+              checkUser(id).whenComplete(() {
+                _isLoading=!_isLoading;
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      if (user != null) {
+                        return FirstScreen();
+                      } else {
+                        return UserProfilePage();
+                      }
+                    },
+                  ),
+                );
+              });
+            }
+          });
+
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,

@@ -42,7 +42,7 @@ User user;
     Future listadoXRol(String pRol) async{
     try {
 
-      var userData =await _usersCollectionReference.where('userRole', isEqualTo: pRol).getDocuments() ;
+      var userData =await _usersCollectionReference.where('userRole',  isEqualTo: pRol).getDocuments() ;
       List<DocumentSnapshot> templist;
       List<Map<dynamic, dynamic>> list = new List();
       templist = userData.documents;

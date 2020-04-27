@@ -16,7 +16,7 @@ class UploadImageMobile implements UploadImage {
     return Image.file(image);
   }
 
-  Future<String> uploadFile() async {
+  Future<String> uploadFile(String idUser, String idDestino,String mensaje) async {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('chats/${Path.basename(UploadImageMobile.imageMobile.path)}');
@@ -29,9 +29,15 @@ class UploadImageMobile implements UploadImage {
     String fileURL = await storageReference.getDownloadURL();
     await Firestore.instance.runTransaction((transaction) async {
       await transaction
-          .set(Firestore.instance.collection("archives").document(), {
-        'kind': 'photo',
-        'url': fileURL,
+          .set(Firestore.instance.collection("archives2").document(), {
+        'fecha': '',
+        'id': '',
+        'imageUrl':fileURL,
+        'mensaje':mensaje,
+        'userId':idUser,
+        'idDestino':idDestino,
+        'videoUrl':'',
+
       });
     });
 

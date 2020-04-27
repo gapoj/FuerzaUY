@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/Common/UploadImage.dart';
-import 'package:fuerzauy/feed_page.dart';
+import 'package:fuerzauy/feed_response_page.dart';
 
 import 'first_screen.dart';
 
@@ -52,7 +52,7 @@ class UploadPageState extends State<UploadPage> {
             image != null && _uploadedFileURL == null
                 ? RaisedButton(
                     child: Text('subir archivo'),
-                    onPressed: uploadFile,
+                    //onPressed: uploadFile,
                     color: Colors.cyan,
                   )
                 : Container(),
@@ -83,13 +83,13 @@ class UploadPageState extends State<UploadPage> {
         });
   }
 
-  void uploadFile() {
-    uploader.uploadFile().then((result) => {
+  /*void uploadFile() {
+   // uploader.uploadFile().then((result) => {
           setState(() {
             _uploadedFileURL = result;
           })
         });
-  }
+  }*/
 
   void clearSelection() {
     setState(() {
