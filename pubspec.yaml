@@ -19,6 +19,9 @@ dependencies:
   image_picker: ^0.6.5
   image_picker_web: ^1.0.6
   uuid: 2.0.4
+  camera: ^0.5.7+4
+  path_provider: ^1.6.5
+
 
 dev_dependencies:
   flutter_test:
