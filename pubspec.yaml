@@ -18,6 +18,8 @@ dependencies:
   cloud_firestore: ^0.13.5
   image_picker: ^0.6.5
   fluttertoast: ^3.1.0
+  shared_preferences: ^0.4.2
+  image_downloader: ^0.19.2
 
   uuid: 2.0.4
 

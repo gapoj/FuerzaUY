@@ -7,7 +7,7 @@ if (dart.library.html) 'package:fuerzauy/Web/UploadImageWeb.dart';
 import 'package:fuerzauy/Mobile/upload_text_mobile.dart';
 abstract class UploadText {
 
-  Future uploadText(String idUser, String idDestino,String mensaje) async {
+  Future uploadText(String idUser, String idDestino,String mensaje,String imageProfile,String userName) async {
     return null;
   }
 

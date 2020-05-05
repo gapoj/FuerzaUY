@@ -53,6 +53,7 @@
 		</dict>
 	</array>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Necesitamos acceso a las fotos para poder subirlas</string>
+	<string>Necesitamos acceso a las fotos para poder subirlas y/o descargarlas</string>
+
 </dict>
 </plist>

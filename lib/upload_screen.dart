@@ -23,14 +23,9 @@ class UploadPageState extends State<UploadPage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return FirstScreen();
-                })
-            );
-            
-            
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+              return FirstScreen();
+            }));
           },
         ),
       ),

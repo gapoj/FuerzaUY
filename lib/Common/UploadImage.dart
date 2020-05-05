@@ -9,7 +9,7 @@ abstract class UploadImage {
     return null;
   }
 
-  Future<String> uploadFile(String idUser, String idDestino,String mensaje) async {
+  Future<String> uploadFile(String idUser,String userName, String idDestino,String mensaje,String imageProfile) async {
     return null;
   }
 

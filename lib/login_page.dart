@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fuerzauy/user.dart';
+import 'package:fuerzauy/shared_preferences.dart';
+import 'package:fuerzauy/shared_preferences.dart';
 import 'package:fuerzauy/user_base.dart';
 import 'package:fuerzauy/user_profile_page.dart';
 import 'sign_in.dart';
@@ -12,6 +13,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +49,8 @@ class _LoginPageState extends State<LoginPage> {
                   MaterialPageRoute(
                     builder: (context) {
                       if (user != null) {
+                        guardaridFirebase(user.id);
+                        //preferencesFU.guardarToken(token);
                         return FirstScreen();
                       } else {
                         return UserProfilePage();

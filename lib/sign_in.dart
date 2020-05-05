@@ -8,7 +8,7 @@ String email;
 String imageUrl;
 String id;
 String fullName;
-String userRole;
+String token;
 
 Future<String> signInWithGoogle() async {
   final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
@@ -43,7 +43,12 @@ Future<String> signInWithGoogle() async {
   }
 
   assert(!user.isAnonymous);
-  assert(await user.getIdToken() != null);
+  var tokenId=await user.getIdToken();
+  assert(tokenId != null);
+  token=tokenId.toString();
+
+
+
 
   final FirebaseUser currentUser = await _auth.currentUser();
   assert(user.uid == currentUser.uid);

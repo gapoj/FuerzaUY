@@ -6,7 +6,7 @@ import 'package:fuerzauy/Common/upload_text.dart';
 
 class UploadTextMobile implements UploadText{
   @override
-  Future<String> uploadText(String idUser, String idDestino, String mensaje) async {
+  Future<String> uploadText(String idUser, String idDestino, String mensaje,String imageProfile,String userName) async {
     await Firestore.instance.runTransaction((transaction) async {
       await transaction
           .set(Firestore.instance.collection("archives2").document(), {
@@ -16,7 +16,10 @@ class UploadTextMobile implements UploadText{
         'mensaje':mensaje,
         'userId':idUser,
         'idDestino':idDestino,
+        'imagenProfile':imageProfile,
         'videoUrl':'',
+        'userName':userName,
+
 
       });
     });

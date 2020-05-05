@@ -1,9 +1,8 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/mensaje_base.dart';
 import 'package:fuerzauy/user.dart';
-import 'package:fuerzauy/user_base.dart' ;
+import 'package:fuerzauy/user_base.dart';
 import 'first_screen.dart';
 import 'mensaje.dart';
 import 'login_page.dart';
@@ -12,485 +11,497 @@ import 'sign_in.dart';
 import 'upload_screen.dart';
 import 'feed_response_page.dart';
 
-class MensajesRecibidos extends StatelessWidget{
-  Mensaje mensaje;
-  bool rolSalud=true;
-  String imagenEmisor;
-  BuildContext  mContext;
-
+class MensajesRecibidos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    mContext=context;
+    Mensaje mensaje;
+
     return MaterialApp(
-
-      home:
-      Scaffold(
+      home: Scaffold(
         backgroundColor: Colors.white70,
-
         appBar: AppBar(
-
           title: Text("Mensajes"),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) {
-                        return FirstScreen();
-                      })
-              );
-
-
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                return FirstScreen();
+              }));
             },
           ),
         ),
-        body:
-
-        FutureBuilder(
-
+        body: FutureBuilder(
           builder: (context, listado) {
-
-
             if (listado.connectionState == ConnectionState.none &&
                 listado.hasData == null) {
-
               return Container();
             }
-            if(listado.connectionState==ConnectionState.waiting){
+            if (listado.connectionState == ConnectionState.waiting) {
               return load();
             }
-            return listado.data==null? Container(): ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(1.0),
-                itemCount: listado.data.length,
-                itemBuilder: (context, position) {
-                  mensaje = Mensaje.fromMap(listado.data[position]);
+            return listado.data == null
+                ? Container()
+                : ListView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(1.0),
+                    itemCount: listado.data.length,
+                    itemBuilder: (context, position) {
+                      mensaje = Mensaje.fromMap(listado.data[position]);
 
-                    if (mensaje.imageUrl != "") {
-                      return conImagen();
-                    } else if (mensaje.videoUrl != "") {
-                      return conVideo();
-                    } else {
-                      return soloTexto();
-                    }
-
-                }
-            );
+                      if (mensaje.imageUrl != "") {
+                        return conImagen(mensaje, context);
+                      } else if (mensaje.videoUrl != "") {
+                        return conVideo(mensaje, context);
+                      } else {
+                        return soloTexto(mensaje, context);
+                      }
+                    });
           },
-
-          future: listadoMensajesXId(id),
-
+          future: listadoMensajesXId(user.id),
         ),
-
-    ),
+      ),
     );
-
-
   }
-  Widget conImagen(){
-    return Column(
 
+  Widget conImagen(Mensaje mensaje, BuildContext context) {
+    return Column(
 
         children: <Widget>[
 
-          Card(
+          Column(children: <Widget>[
+            new Container(
+                color: Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Sección izquierda
+                    new Container(
+                      child: Row(
 
-              color: Colors.white,
-              child: Column(
-
-                children: <Widget>[
-                  new Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-
-                        children: <Widget>[
-                          // Sección izquierda
-
+                        children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(imagenDestinoUrl),
-
+                            backgroundImage: NetworkImage(mensaje.imgProfile),
+                            radius: 20.0,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
 
-                            children: <Widget>[
-                              Text(
-                                '10:21',
-                                style: TextStyle(
-                                  color: Colors.green[700],
-                                ),
-                              ),
-                              IconButton(
-                                  icon:Icon(Icons.delete),
-                                  iconSize: 20,
-                                  tooltip: 'Imagen',
-                                  onPressed: () {
+                        ],
+                      ),
 
-                                  }
-                              )
-                            ],
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
+
+                        children: [
+                          Text(
+                            mensaje.userName,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+
+                          Text(
+                            '10:21',
+                            style: TextStyle(
+                              color: Colors.green[700],
+                              fontSize: 18.0,
+                            ),
                           ),
                         ],
-                      )
-                  ),
-                  new Container(
+                      ),
+                    ),
 
 
+                  ],
+                )),
+            new Container(
+                color:Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(50, 10, 10, 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                                height: 200,
+                                decoration: BoxDecoration(
 
-                    child:
-                          Row(
-                            children: <Widget>[
-                            // Sección izquierda
-
-
-
-
-
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(50, 10, 10, 10),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: <Widget>[
-                                      Image.network(
-
-                                          mensaje.imageUrl
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                                      ),
-                                      Text(mensaje.mensaje,
-
-                                        style: TextStyle(
-                                          fontSize: 20.0,
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
 
 
-                                          decoration: TextDecoration.none,
+                                    image: DecorationImage(
 
-
-                                        ),
-                                      ),
-                                    ],
-
-                                  ),
-                                ),
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(mensaje.imageUrl),
+                                    )
+                                )
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            ),
+                            Text(
+                              mensaje.mensaje,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                decoration: TextDecoration.none,
                               ),
-
-                            ],
-                          )
-                          ),
-                  new Container(
-                    padding: const EdgeInsets.all(8.0),
-
-                    child:
-                    Column(
-
-                    children:[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-
-                        RaisedButton(
-                          onPressed: (){
-                            Navigator.of(mContext).pop();
-                            Navigator.of(mContext).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return FeedPage(mensaje.userId);
-                                },
-                              ),
-                            );
-                          },
-                          color: Colors.lightBlue,
-
-                          child: Text(
-                            'Responder',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
+                            ),
+                          ],
                         ),
-
-                      ],
+                      ),
                     ),
-                      ]
-                    ),
-                  ),
-
-                    ]
-                  ),
+                  ],
                 )
-    ]
-    );
-  }
-  Widget conVideo(){
-    return Column(
 
+            ),
+            new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return FeedResponsePage(mensaje.userId,mensaje.userName, mensaje.imgProfile, mensaje.imageUrl,
+                                  mensaje.mensaje);
+                            },
+                          ),
+                        );
+                      },
+                      color: Colors.lightBlue,
+                      child: Text(
+                        'Responder',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ]
+          ),
+
+          Divider(
+            height: 1.0,
+            color: Colors.grey,
+          ),
+
+        ]);
+  }
+
+  Widget conVideo(Mensaje mensaje, BuildContext context) {
+    return Column(
 
         children: <Widget>[
 
-          Card(
+          Column(children: <Widget>[
+            new Container(
+                color: Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Sección izquierda
+                    new Container(
+                      child: Row(
 
-            color: Colors.white,
-            child: Column(
-
-                children: <Widget>[
-                  new Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-
-                        children: <Widget>[
-                          // Sección izquierda
-
+                        children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(imagenDestinoUrl),
-
+                            backgroundImage: NetworkImage(mensaje.imgProfile),
+                            radius: 20.0,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
 
-                            children: <Widget>[
-                              Text(
-                                '10:21',
-                                style: TextStyle(
-                                  color: Colors.green[700],
-                                ),
-                              ),
-                              IconButton(
-                                  icon:Icon(Icons.delete),
-                                  iconSize: 20,
-                                  tooltip: 'Imagen',
-                                  onPressed: () {
-
-                                  }
-                              )
-                            ],
-                          ),
                         ],
-                      )
-                  ),
-                  new Container(
+                      ),
 
-                      padding: const EdgeInsets.all(10),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
 
-                      child:
-                      Row(
-                        children: <Widget>[
-                          // Sección izquierda
-
-
-
-
-
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  Image.network(
-
-                                      mensaje.imageUrl
-                                  ),
-                                  Text(mensaje.mensaje,
-
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-
-
-                                      decoration: TextDecoration.none,
-
-
-                                    ),
-                                  ),
-                                ],
-
-                              ),
+                        children: [
+                          Text(
+                            mensaje.userName,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
                             ),
                           ),
 
                         ],
-                      )
-                  ),
-                  new Container(
-                    padding: const EdgeInsets.all(8.0),
+                      ),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
 
-                    child:
-                    Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
 
-                        children:[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-
-                              RaisedButton(
-                                onPressed: (){
-
-                                },
-                                color: Colors.lightBlue,
-
-                                child: Text(
-                                  'Responder',
-                                  style: TextStyle(fontSize: 18, color: Colors.white),
-                                ),
-
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                              ),
-
-                            ],
+                          Text(
+                            '10:21',
+                            style: TextStyle(
+                              color: Colors.green[700],
+                              fontSize: 18.0,
+                            ),
                           ),
-                        ]
+                        ],
+                      ),
+                    ),
+
+
+                  ],
+                )),
+            new Container(
+                color:Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(50, 10, 10, 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+
+                                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+
+
+                                    image: DecorationImage(
+
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(mensaje.imageUrl),
+                                    )
+                                )
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            ),
+                            Text(
+                              mensaje.mensaje,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+            new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return FeedResponsePage(mensaje.userId,mensaje.userName, mensaje.imgProfile, null,
+                                  mensaje.mensaje);
+                            },
+                          ),
+                        );
+                      },
+                      color: Colors.lightBlue,
+                      child: Text(
+                        'Responder',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
                     ),
                   ),
-
-                ]
-            ),
-          )
-        ]
-    );
+                ],
+              ),
+            )
+          ]),
+          Divider(
+            height: 1.0,
+            color: Colors.grey,
+          ),
+        ]);
   }
-  Widget soloTexto(){
-    return Column(
 
+  Widget soloTexto(Mensaje mensaje, BuildContext context) {
+    return Column(
 
         children: <Widget>[
 
-          Card(
+          Column(children: <Widget>[
+            new Container(
+                color: Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // Sección izquierda
+                    new Container(
+                      child: Row(
 
-            color: Colors.white,
-            child: Column(
-
-                children: <Widget>[
-                  new Container(
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-
-                        children: <Widget>[
-                          // Sección izquierda
-
+                        children: [
                           CircleAvatar(
-                            backgroundImage: NetworkImage(imagenDestinoUrl),
-
+                            backgroundImage: NetworkImage(mensaje.imgProfile),
+                            radius: 20.0,
                           ),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
 
-                            children: <Widget>[
-                              Text(
-                                '10:21',
-                                style: TextStyle(
-                                  color: Colors.green[700],
-                                ),
-                              ),
-                              IconButton(
-                                  icon:Icon(Icons.delete),
-                                  iconSize: 20,
-                                  tooltip: 'Imagen',
-                                  onPressed: () {
-
-                                  }
-                              )
-                            ],
-                          ),
                         ],
-                      )
-                  ),
-                  new Container(
+                      ),
 
-                      padding: const EdgeInsets.all(10),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
 
-                      child:
-                      Row(
-                        children: <Widget>[
-                          // Sección izquierda
-
-
-
-
-
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-
-                                  Text(mensaje.mensaje,
-
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-
-
-                                      decoration: TextDecoration.none,
-
-
-                                    ),
-                                  ),
-                                ],
-
-                              ),
+                        children: [
+                          Text(
+                            mensaje.userName,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18.0,
                             ),
                           ),
 
                         ],
-                      )
-                  ),
-                  new Container(
-                    padding: const EdgeInsets.all(8.0),
+                      ),
+                    ),
+                    new Container(
+                      padding: EdgeInsets.only(left: 2.0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
 
-                    child:
-                    Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
 
-                        children:[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-
-                              RaisedButton(
-                                onPressed: (){
-
-                                },
-                                color: Colors.lightBlue,
-
-                                child: Text(
-                                  'Responder',
-                                  style: TextStyle(fontSize: 18, color: Colors.white),
-                                ),
-
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                              ),
-
-                            ],
+                          Text(
+                            '10:21',
+                            style: TextStyle(
+                              color: Colors.green[700],
+                              fontSize: 18.0,
+                            ),
                           ),
-                        ]
+                        ],
+                      ),
+                    ),
+
+
+                  ],
+                )),
+            new Container(
+                color:Colors.white,
+                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(50, 10, 10, 10),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              mensaje.mensaje,
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                decoration: TextDecoration.none,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                )),
+            new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return FeedResponsePage(mensaje.userId,mensaje.userName, mensaje.imgProfile, null,
+                                  mensaje.mensaje);
+                            },
+                          ),
+                        );
+                      },
+                      color: Colors.lightBlue,
+                      child: Text(
+                        'Responder',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5)),
                     ),
                   ),
-
-                ]
-            ),
-          )
-        ]
-    );
+                ],
+              ),
+            )
+          ]),
+          Divider(
+            height: 1.0,
+            color: Colors.grey,
+          ),
+        ]);
   }
-                    /*Row(
+
+  /*Row(
 
                       children: [
                         Row(
@@ -903,13 +914,10 @@ class MensajesRecibidos extends StatelessWidget{
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              new CircularProgressIndicator()
-            ],
+            children: <Widget>[new CircularProgressIndicator()],
           ),
         ),
       ),
     );
   }
-
 }

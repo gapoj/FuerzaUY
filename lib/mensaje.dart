@@ -10,8 +10,10 @@ class Mensaje{
   final String videoUrl;
   final String fecha;
   final String id;
+  final String imgProfile;
+  final String userName;
 
-  Mensaje({this.id,this.mensaje, this.imageUrl, this.userId, this.videoUrl, this.fecha});
+  Mensaje({this.id,this.userName,this.mensaje, this.imageUrl, this.userId, this.videoUrl, this.fecha,this.imgProfile});
 
   static Mensaje fromMap(Map<String,dynamic>map) {
 
@@ -23,6 +25,8 @@ class Mensaje{
     assert(map['mensaje']!=null);
     assert(map['userId']!=null);
     assert(map['videoUrl']!=null);
+    assert(map['imagenProfile']!=null);
+    assert(map['userName']!=null);
     return Mensaje(
 
         userId:map['userId'],
@@ -30,7 +34,9 @@ class Mensaje{
         imageUrl:map['imageUrl'],
         id:map['id'],
         fecha:map['fecha'],
-        videoUrl: map['videoUrl']
+        videoUrl: map['videoUrl'],
+        imgProfile: map['imagenProfile'],
+        userName: map['userName']
     );
   }
 

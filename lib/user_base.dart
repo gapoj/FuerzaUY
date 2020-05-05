@@ -1,16 +1,17 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fuerzauy/first_screen.dart';
 
 import 'sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fuerzauy/user.dart';
 import 'sign_in.dart';
-
+  String userRole;
 
   final CollectionReference _usersCollectionReference=Firestore.instance.collection('users');
 
 
-User user;
+  User user;
 
 
 
@@ -33,6 +34,7 @@ User user;
 
       var userData = await _usersCollectionReference.document(pId).get();
       user= User.fromMap(userData.data);
+      userRole=user.userRole;
       return user;
     }catch(e){
       return e.toString();
