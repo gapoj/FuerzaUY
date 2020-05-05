@@ -38,22 +38,31 @@ class _MyAppState extends State<MyApp> {
           body: FutureBuilder(
               future: getFirebaseId(),
               builder: (context, userId) {
-
+                if (userId.connectionState == ConnectionState.waiting) {
+                  return splash();
+                }
                 if (userId.hasData) {
-                  checkUser(userId.data).whenComplete(() {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      if (user != null) {
-                        return FirstScreen();
-                      } else {
-                        return LoginPage();
-                      }
+                  if(userId.data!=null) {
+                    checkUser(userId.data).whenComplete(() {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        if (user != null) {
+                          return FirstScreen();
+                        } else {
+                          return LoginPage();
+                        }
+                      }));
+                    });
+                  }else{
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                      return LoginPage();
                     }));
-                  });
-                } else if(userId.connectionState==ConnectionState.done && userId.hasData==null){
+                  }
+                }else{
                   return LoginPage();
                 }
                 return splash();
+
               }),
         ));
   }
