@@ -38,7 +38,9 @@ class _MyAppState extends State<MyApp> {
           body: FutureBuilder(
               future: getFirebaseId(),
               builder: (context, userId) {
-
+                if (userId.connectionState == ConnectionState.waiting) {
+                  return splash();
+                }
                 if (userId.hasData) {
                   checkUser(userId.data).whenComplete(() {
                     Navigator.of(context)
@@ -50,10 +52,11 @@ class _MyAppState extends State<MyApp> {
                       }
                     }));
                   });
-                } else if(userId.connectionState==ConnectionState.done && userId.hasData==null){
+                }
+                if(userId.connectionState==ConnectionState.done && userId.hasData==null){
                   return LoginPage();
                 }
-                return splash();
+                return LoginPage();
               }),
         ));
   }
