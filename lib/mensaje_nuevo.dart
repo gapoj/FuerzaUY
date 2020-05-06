@@ -74,7 +74,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
             },
           ),
         ),
-        body: SingleChildScrollView(
+        body:enviado==true?load(): SingleChildScrollView(
             child: Card(
           color: Colors.white,
           child: Column(
@@ -265,7 +265,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                       ),
                     ]),
               ),
-              new Container(
+              enviado==true?load():new Container(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -337,7 +337,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                       height: 40.0,
                       child: Text('Enviar',
                           style: TextStyle(color: Colors.white, fontSize: 25)),
-                      onPressed: btnEnvioState == true ? enviar : null,
+                      onPressed: btnEnvioState == true ?enviar : null,
                       color: Colors.cyan,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5)),
@@ -351,21 +351,16 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
   }
 
   void uploadFile(User usuarioEnviar) {
-    FutureBuilder(
-        builder: (context, url) {
-          if (url.connectionState == ConnectionState.none &&
-              url.hasData == null) {
-            return Container();
-          }
-          if (url.connectionState == ConnectionState.waiting) {
-            //return load();
-          }
-          url == null ? Container() : _uploadedFileURL = url.data.toString();
-          setState(() {
-            enviado = true;
-            myController.dispose();
-          });
+    enviado = true;
           if (todos == false) {
+            uploaderImage.uploadFile(user.id, user.fullName, usuarioEnviar.id,
+                myController.text, user.imageUrl).then((value) => {
+              setState(() {
+                mensajeEnviado = value;
+                enviado = true;
+                myController.dispose();
+              }),
+            });
             Fluttertoast.showToast(
                 msg: "Tu mensaje ha sido enviado a " + usuarioEnviar.fullName,
                 toastLength: Toast.LENGTH_LONG,
@@ -374,37 +369,33 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                 textColor: Colors.white,
                 fontSize: 16.0);
           } else {
+            uploaderImage.uploadFile(user.id, user.fullName, '',
+                myController.text, user.imageUrl).then((value) => {
+            setState(() {
+            mensajeEnviado = value;
+            enviado = true;
+            }),
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => FirstScreen()));
-          }
-        },
-        future: todos == false
-            ? uploaderImage.uploadFile(user.id, user.fullName, usuarioEnviar.id,
-                myController.text, user.imageUrl)
-            : uploaderImage.uploadFile(
-                user.id, user.fullName, '', myController.text, user.imageUrl));
+            MaterialPageRoute(builder: (context) => FirstScreen()))
+            });}
+
+
   }
 
   Widget uploadText(User usuarioEnviar) {
+    enviado = true;
     if (todos == false) {
       uploaderText
           .uploadText(user.id, usuarioEnviar.id, myController.text,
               user.imageUrl, user.fullName)
           .then((value) => {
-                setState(() {
-                  mensajeEnviado = value;
-                  enviado = true;
-                  myController.dispose();
-                }),
-                Fluttertoast.showToast(
-                    msg: "Tu mensaje ha sido enviado a " +
-                        usuarioEnviar.fullName,
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.CENTER,
-                    backgroundColor: Colors.black,
-                    textColor: Colors.white,
-                    fontSize: 16.0)
-              });
+        setState(() {
+          mensajeEnviado = value;
+          enviado = true;
+        }),
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => FirstScreen()))
+      });
     } else {
       uploaderText
           .uploadText(
@@ -446,6 +437,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
 
   void enviar() {
     if (todos == true || usuarioEnvio != null) {
+
       if (image != null) {
         uploadFile(usuarioEnvio);
       } else {
@@ -511,6 +503,20 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
           secondary: const Icon(Icons.hourglass_empty),
         ),
       ]),
+    );
+  }
+  Widget load() {
+    return Scaffold(
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[new CircularProgressIndicator()],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -12,6 +12,7 @@ final CollectionReference _mensajesCollectionReference =
 Future listadoMensajes() async {
   var mensajes = await _mensajesCollectionReference
       .where('idDestino', isEqualTo: "")
+      .orderBy('fecha',descending: true)
       .getDocuments();
   List<DocumentSnapshot> templist;
   List<Map<dynamic, dynamic>> list = new List();

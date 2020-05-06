@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/detalle_imagen_listview.dart';
 import 'package:fuerzauy/mensaje_base.dart';
@@ -90,7 +91,7 @@ class FirstScreen extends StatelessWidget {
                 signOutGoogle();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) {
-                      guardaridFirebase('');
+                      guardaridFirebase(null);
                       return LoginPage();
                     }), ModalRoute.withName('/'));
               },
@@ -98,7 +99,14 @@ class FirstScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: FutureBuilder(
+        body: StreamBuilder(
+          stream: Firestore.instance
+            .collection('archives2')
+              .where('idDestino', isEqualTo: "")
+          .orderBy('fecha',descending: true)
+            .limit(20)
+            .snapshots(),
+
           builder: (context, listado) {
             if (listado.connectionState == ConnectionState.none &&
                 listado.hasData == null) {
@@ -113,9 +121,9 @@ class FirstScreen extends StatelessWidget {
                 : ListView.builder(
                 shrinkWrap: true,
                 padding: const EdgeInsets.all(1.0),
-                itemCount: listado.data.length,
+                itemCount: listado.data.documents.length,
                 itemBuilder: (context, position) {
-                  mensaje = Mensaje.fromMap(listado.data[position]);
+                  mensaje = Mensaje.fromMap(listado.data.documents[position].data );
 
                   if (userRole == "0") {
                     if (mensaje.imageUrl != "") {
@@ -130,7 +138,7 @@ class FirstScreen extends StatelessWidget {
                   }
                 });
           },
-          future: listadoMensajes(),
+
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.create),
@@ -196,7 +204,7 @@ class FirstScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        '10:21',
+                        msj.fecha,
                         style: TextStyle(
                           color: Colors.green[700],
                           fontSize: 18.0,
@@ -311,7 +319,7 @@ class FirstScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        '10:21',
+                        msj.fecha,
                         style: TextStyle(
                           color: Colors.green[700],
                           fontSize: 18.0,
@@ -399,7 +407,7 @@ class FirstScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        '10:21',
+                        msj.fecha,
                         style: TextStyle(
                           color: Colors.green[700],
                           fontSize: 18.0,
@@ -491,7 +499,7 @@ class FirstScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          '10:21',
+                          msj.fecha,
                           style: TextStyle(
                             color: Colors.green[700],
                           ),
@@ -684,7 +692,7 @@ class FirstScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
-                          '10:21',
+                          msj.fecha,
                           style: TextStyle(
                             color: Colors.green[700],
                           ),
@@ -755,4 +763,5 @@ class FirstScreen extends StatelessWidget {
       ]);
     }
   }
+
 }

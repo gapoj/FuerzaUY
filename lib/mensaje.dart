@@ -2,6 +2,8 @@
 
 
 
+import 'package:intl/intl.dart';
+
 class Mensaje{
 
   final String mensaje;
@@ -27,13 +29,16 @@ class Mensaje{
     assert(map['videoUrl']!=null);
     assert(map['imagenProfile']!=null);
     assert(map['userName']!=null);
+    final fechaF = new DateFormat('dd-MM-yyyy');
+    int valorFecha=int.parse(map['fecha']);
+    String fechaMensaje=fechaF.format(new DateTime.fromMicrosecondsSinceEpoch(valorFecha*1000));
     return Mensaje(
 
         userId:map['userId'],
         mensaje:map['mensaje'],
         imageUrl:map['imageUrl'],
         id:map['id'],
-        fecha:map['fecha'],
+        fecha:fechaMensaje ,
         videoUrl: map['videoUrl'],
         imgProfile: map['imagenProfile'],
         userName: map['userName']

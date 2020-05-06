@@ -30,7 +30,7 @@ class UploadImageMobile implements UploadImage {
     await Firestore.instance.runTransaction((transaction) async {
       await transaction
           .set(Firestore.instance.collection("archives2").document(), {
-        'fecha': '',
+        'fecha': DateTime.now().millisecondsSinceEpoch.toString(),
         'id': '',
         'imageUrl':fileURL,
         'mensaje':mensaje,
