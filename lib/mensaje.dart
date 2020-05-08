@@ -2,6 +2,7 @@
 
 
 
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Mensaje{
@@ -42,6 +43,28 @@ class Mensaje{
         videoUrl: map['videoUrl'],
         imgProfile: map['imagenProfile'],
         userName: map['userName']
+    );
+  }
+
+  static fromInstagramMap(Map<String,dynamic>map){
+    if(map==null) return null;
+
+
+    assert(map['imageUrl']!=null);
+    assert(map['firstComment']!=null);
+    assert(map['ownerUsername']!=null);
+    assert(map['timestamp']!=null);
+
+    return Mensaje(
+
+        userId:'',
+        mensaje:map['firstComment'],
+        imageUrl:map['imageUrl'],
+        id:'',
+        fecha:map['timestamp'],
+        videoUrl: '',
+        imgProfile: '',
+        userName: map['ownerUsername']
     );
   }
 

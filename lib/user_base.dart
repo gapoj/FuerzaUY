@@ -16,10 +16,11 @@ import 'sign_in.dart';
 
 
   Future createProfile (String pId,int userRole,String departamento) async {
-
+    User userAux=new User(id:pId,fullName: fullName,email: email,userRole: userRole.toString(),imageUrl: imageUrl, departamento:departamento);
     try{
 
-     await _usersCollectionReference.document(id).setData(User(id:pId,fullName: fullName,email: email,userRole: userRole.toString(),imageUrl: imageUrl, departamento:departamento).toMap());
+     await _usersCollectionReference.document(id).setData(userAux.toMap());
+     user=userAux;
      return true;
     }catch(e){
       return e.toString();

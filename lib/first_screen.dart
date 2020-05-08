@@ -1,4 +1,6 @@
+import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/detalle_imagen_listview.dart';
 import 'package:fuerzauy/mensaje_base.dart';
@@ -11,14 +13,56 @@ import 'sign_in.dart';
 import 'user_base.dart' as baseUsuario;
 import 'upload_screen.dart';
 import 'feed_response_page.dart';
+import 'dart:async';
+import 'package:rxdart/rxdart.dart';
 
-class FirstScreen extends StatelessWidget {
+
+class FirstScreen extends StatefulWidget {
+  @override
+  FirstScreenState createState() => FirstScreenState();
+}
+
+class FirstScreenState extends State<FirstScreen> {
+  ScrollController _scrollController;
+
+
+
+
+  _scrollToTop() {
+    _scrollController.animateTo(_scrollController.position.minScrollExtent,
+        duration: Duration(milliseconds: 500), curve: Curves.easeIn);
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    String userRole = baseUsuario.userRole;
+    //String userRole = '1';
+
+    Stream mensajes = Firestore.instance
+        .collection('archives2')
+        .where('idDestino', isEqualTo: "")
+        .orderBy('fecha', descending: true)
+        .limit(20)
+        .snapshots();
+
+    Stream instagram =
+    Firestore.instance.collection("instagram-fuerza-uruguay-WID").orderBy('timestamp',descending: true).limit(20).snapshots();
+    getData() {
+
+      return StreamGroup.merge(([instagram,mensajes]));
+    }
+
     Mensaje mensaje;
     return MaterialApp(
-
       home: Scaffold(
         backgroundColor: Colors.white70,
         drawer: Drawer(
@@ -72,7 +116,6 @@ class FirstScreen extends StatelessWidget {
         appBar: AppBar(
           title: Text("Fuerza Uruguay"),
           actions: <Widget>[
-
             CircleAvatar(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -91,23 +134,36 @@ class FirstScreen extends StatelessWidget {
                 signOutGoogle();
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) {
-                      guardaridFirebase(null);
-                      return LoginPage();
-                    }), ModalRoute.withName('/'));
+                  guardaridFirebase(null);
+                  return LoginPage();
+                }), ModalRoute.withName('/'));
               },
               color: Colors.white,
             ),
           ],
         ),
-        body: StreamBuilder(
-          stream: Firestore.instance
-            .collection('archives2')
-              .where('idDestino', isEqualTo: "")
-          .orderBy('fecha',descending: true)
-            .limit(20)
-            .snapshots(),
+        body: StreamBuilder<List<QuerySnapshot>>(
 
-          builder: (context, listado) {
+          stream: CombineLatestStream.list([
+            mensajes,instagram
+          ]) ,
+          builder: (context,AsyncSnapshot<List<QuerySnapshot>> listado) {
+
+
+            int lengthOfDocs=0;
+            int querySnapShotCounter = 0;
+            int counter = 0;
+            int counterAux=0;
+            int querySnapShotCounterAux = 1;
+            if(listado.hasData){
+
+              listado.data.forEach((snap){lengthOfDocs = lengthOfDocs + snap.documents.length;});
+
+               //aux=querySnapshotData;
+               //aux2=querySnapshotData.data[1];
+              //aux[1].forEach((element)=>aux[0].add(element));
+
+            }
             if (listado.connectionState == ConnectionState.none &&
                 listado.hasData == null) {
               return Container();
@@ -119,45 +175,187 @@ class FirstScreen extends StatelessWidget {
             return listado.data == null
                 ? Container()
                 : ListView.builder(
-                shrinkWrap: true,
-                padding: const EdgeInsets.all(1.0),
-                itemCount: listado.data.documents.length,
-                itemBuilder: (context, position) {
-                  mensaje = Mensaje.fromMap(listado.data.documents[position].data );
 
-                  if (userRole == "0") {
-                    if (mensaje.imageUrl != "") {
-                      return conImagen(mensaje, context);
-                    } else if (mensaje.videoUrl != "") {
-                      return conVideo(mensaje, context);
-                    } else {
-                      return soloTexto(mensaje, context);
-                    }
-                  } else {
-                    return getRolSalud(mensaje, context);
-                  }
-                });
-          },
+                    controller: _scrollController,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(1.0),
+                    itemCount: lengthOfDocs,
+                    itemBuilder: (context, index) {
 
-        ),
-        floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.create),
-          backgroundColor: Colors.green,
-          foregroundColor: Colors.white,
-          tooltip: 'Crear Mensaje',
-          onPressed: () {
-            Navigator.of(context).pop();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return MensajeEnvio();
-                },
-              ),
-            );
+                      //listado.data.forEach((snap){lengthOfDocs = lengthOfDocs + snap.documents.length;});
+                     try{
+
+                       mensaje = Mensaje.fromMap(
+                           listado.data[querySnapShotCounter].documents[counter].data);
+                       counter = counter + 1 ;
+                     }catch(RangeError){
+
+
+
+                       mensaje = Mensaje.fromInstagramMap(
+                           listado.data[querySnapShotCounterAux].documents[counterAux].data);
+
+                       counterAux = counterAux + 1 ;
+                       return desdeInstagram(mensaje, context);
+                     }
+                      if (baseUsuario.user.userRole == "0") {
+                        if (mensaje.imageUrl != "") {
+                          return conImagen(mensaje, context);
+                        } else if (mensaje.videoUrl != "") {
+                          return conVideo(mensaje, context);
+                        } else {
+                          return soloTexto(mensaje, context);
+                        }
+                      } else {
+                        return getRolSalud(mensaje, context);
+                      }
+                    });
+
           },
         ),
+        floatingActionButton:
+            Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Container(
+            padding: EdgeInsets.only(bottom: 25),
+            height: 55,
+            width: 55,
+            child: FloatingActionButton(
+              heroTag: null,
+              onPressed: _scrollToTop,
+              backgroundColor: Colors.white70,
+              foregroundColor: Colors.black54,
+              tooltip: 'Ir al principio',
+              child: Icon(Icons.arrow_upward),
+            ),
+          ),
+          FloatingActionButton(
+            child: Icon(Icons.create),
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.white,
+            tooltip: 'Crear Mensaje',
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return MensajeEnvio();
+                  },
+                ),
+              );
+            },
+          ),
+        ]),
       ),
     );
+  }
+  Widget desdeInstagram(Mensaje msj, BuildContext context) {
+    return Column(children: <Widget>[
+      Column(children: <Widget>[
+        new Container(
+            color: Colors.white,
+            constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Sección izquierda
+                new Container(
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        child: Image.asset('assets/banner.png'),
+                        radius: 25.0,
+                      ),
+                    ],
+                  ),
+                ),
+                new Container(
+                  padding: EdgeInsets.only(left: 12.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        msj.userName,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                new Container(
+                  padding: EdgeInsets.only(left: 12.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children:<Widget> [
+
+                      Text(
+                        msj.fecha.substring(0,10),
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+        new Container(
+            color: Colors.white,
+            constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(70, 0, 10, 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        InkWell(
+                          child: Container(
+                              height: 200,
+                              decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(8.0)),
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(msj.imageUrl),
+                                  ))),
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetalleImagenLV(msj.imageUrl)));
+                          },
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                        ),
+                        Text(
+                          msj.mensaje,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )),
+      ]),
+      Divider(
+        height: 1.0,
+        color: Colors.grey,
+      ),
+    ]);
   }
 
   Widget conImagen(Mensaje msj, BuildContext context) {
@@ -201,7 +399,7 @@ class FirstScreen extends StatelessWidget {
                   padding: EdgeInsets.only(left: 12.0),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
                         msj.fecha,
@@ -228,27 +426,21 @@ class FirstScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         InkWell(
-
                           child: Container(
-
                               height: 200,
-
                               decoration: BoxDecoration(
-
                                   borderRadius:
-                                  BorderRadius.all(Radius.circular(8.0)),
+                                      BorderRadius.all(Radius.circular(8.0)),
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
                                     image: NetworkImage(msj.imageUrl),
                                   ))),
                           onTap: () {
-                            Navigator
-                                .push(context,MaterialPageRoute(builder: (context)
-                            =>
-                                DetalleImagenLV(msj.imageUrl)
-                            )
-                            );
-
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        DetalleImagenLV(msj.imageUrl)));
                           },
                         ),
                         Padding(
@@ -434,7 +626,7 @@ class FirstScreen extends StatelessWidget {
                             height: 200,
                             decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(8.0)),
+                                    BorderRadius.all(Radius.circular(8.0)),
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
                                   image: NetworkImage(msj.imageUrl),
@@ -481,287 +673,390 @@ class FirstScreen extends StatelessWidget {
   Widget getRolSalud(Mensaje msj, BuildContext context) {
     if (msj.imageUrl != "") {
       return Column(children: <Widget>[
-        Card(
-          color: Colors.white,
-          child: Column(children: <Widget>[
-            new Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    // Sección izquierda
-
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(msj.imgProfile),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text(
-                          msj.fecha,
-                          style: TextStyle(
-                            color: Colors.green[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                )),
-            new Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(60, 10, 10, 10),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Image.network(
-                              msj.imageUrl,
-                              height: 300,
-                              fit: BoxFit.contain,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                            ),
-                            Text(
-                              msj.mensaje,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-            new Container(
+        Column(children: <Widget>[
+          new Container(
+              color: Colors.white,
               constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
               padding: const EdgeInsets.all(8.0),
-              child: Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    RaisedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return FeedResponsePage(msj.userId,msj.userName, msj.imgProfile,
-                                  msj.imageUrl, msj.mensaje);
-                            },
-                          ),
-                        );
-                      },
-                      color: Colors.lightBlue,
-                      child: Text(
-                        'Responder',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
-                    ),
-                  ],
-                ),
-              ]),
-            ),
-          ]),
-        )
-      ]);
-    } else if (msj.videoUrl != "") {
-      return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <
-          Widget>[
-        Card(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                new Container(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                              ),
-                              backgroundImage: NetworkImage(
-                                msj.imgProfile,
-                              ),
-                              radius: 20,
-                              backgroundColor: Colors.transparent,
-                            ),
-                            Text(
-                              "4:08 PM",
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                          ]),
-                    ],
-                  ),
-                ),
-                new Container(
-                    padding: const EdgeInsets.fromLTRB(60, 10, 10, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Sección izquierda
+                  new Container(
                     child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(50, 10, 10, 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Image.network(msj.imageUrl),
-                                Text(
-                                  msj.mensaje,
-                                  style: TextStyle(
-                                    fontSize: 20.0,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                ),
-                              ],
-                            ),
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(msj.imgProfile),
+                          radius: 25.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          msj.userName,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
                           ),
                         ),
                       ],
-                    )),
-                new Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  child: Column(
-                    children: [
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: RaisedButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return FeedResponsePage(msj.userId,msj.userName, msj.imgProfile,
-                                      msj.imageUrl, msj.mensaje);
-                                },
-                              ),
-                            );
-                          },
-                          color: Colors.lightBlue,
-                          child: Text(
-                            'Responder',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
-                          ),
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-              crossAxisAlignment: CrossAxisAlignment.center,
-            )),
-      ]);
-    } else {
-      return Column(children: <Widget>[
-        Card(
-          color: Colors.white,
-          child: Column(children: <Widget>[
-            new Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    // Sección izquierda
-
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(msj.imgProfile),
                     ),
-                    Row(
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
                         Text(
                           msj.fecha,
                           style: TextStyle(
                             color: Colors.green[700],
+                            fontSize: 16.0,
                           ),
                         ),
                       ],
-                    ),
-                  ],
-                )),
-            new Container(
-                constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 40.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              msj.mensaje,
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-            new Container(
-              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
-              padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: RaisedButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return FeedResponsePage(msj.userId,msj.userName, msj.imgProfile, null,
-                                  msj.mensaje);
-                            },
-                          ),
-                        );
-                      },
-                      color: Colors.lightBlue,
-                      child: Text(
-                        'Responder',
-                        style: TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5)),
                     ),
                   ),
                 ],
-              ),
-            )
+              )),
+          new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(70, 0, 10, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          InkWell(
+                            child: Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(msj.imageUrl),
+                                    ))),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DetalleImagenLV(msj.imageUrl)));
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          ),
+                          Text(
+                            msj.mensaje,
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+        ]),
+        new Container(
+          color: Colors.white,
+          constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  icon:Icon(Icons.reply),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return FeedResponsePage(msj.userId, msj.userName,
+                              msj.imgProfile, msj.imageUrl, msj.mensaje);
+                        },
+                      ),
+                    );
+                  },
+                  color: Colors.lightBlue,
+
+                ),
+              ],
+            ),
+
           ]),
-        )
+        ),
+        Divider(
+          height: 1.0,
+          color: Colors.grey,
+        ),
+      ]);
+    } else if (msj.videoUrl != "") {
+      return Column(children: <Widget>[
+        Column(children: <Widget>[
+          new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Sección izquierda
+                  new Container(
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(msj.imgProfile),
+                          radius: 25.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          msj.userName,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          msj.fecha,
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )),
+          new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(70, 0, 10, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          InkWell(
+                            child: Container(
+                                height: 200,
+                                decoration: BoxDecoration(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8.0)),
+                                    image: DecorationImage(
+                                      fit: BoxFit.fill,
+                                      image: NetworkImage(msj.imageUrl),
+                                    ))),
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          DetalleImagenLV(msj.imageUrl)));
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          ),
+                          Text(
+                            msj.mensaje,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+        ]),
+        new Container(
+          color: Colors.white,
+          constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+          padding: const EdgeInsets.all(8.0),
+          child: Column(children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                 IconButton(
+                  icon: Icon(Icons.reply),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return FeedResponsePage(msj.userId, msj.userName,
+                              msj.imgProfile, msj.imageUrl, msj.mensaje);
+                        },
+                      ),
+                    );
+                  },
+                  color: Colors.lightBlue,
+
+                ),
+              ],
+            ),
+          ]),
+        ),
+        Divider(
+          height: 1.0,
+          color: Colors.grey,
+        ),
+      ]);
+    } else {
+      return Column(children: <Widget>[
+        Column(children: <Widget>[
+          new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  // Sección izquierda
+                  new Container(
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(msj.imgProfile),
+                          radius: 25.0,
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          msj.userName,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  new Container(
+                    padding: EdgeInsets.only(left: 12.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          msj.fecha,
+                          style: TextStyle(
+                            color: Colors.green[700],
+                            fontSize: 18.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              )),
+          new Container(
+              color: Colors.white,
+              constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(70, 10, 10, 10),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            msj.mensaje,
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+        ]),
+        new Container(
+          color: Colors.white,
+          constraints: BoxConstraints(minWidth: 100, maxWidth: 500),
+          padding: const EdgeInsets.fromLTRB(0, 0, 10, 10),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.bottomRight,
+                child: IconButton(
+                  icon: Icon(Icons.reply),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return FeedResponsePage(msj.userId, msj.userName,
+                              msj.imgProfile, null, msj.mensaje);
+                        },
+                      ),
+                    );
+                  },
+                  color: Colors.lightBlue,
+
+
+                ),
+              ),
+            ],
+          ),
+        ),
+        Divider(
+          height: 1.0,
+          color: Colors.grey,
+        ),
       ]);
     }
   }
-
 }

@@ -50,7 +50,7 @@ class DetalleImagenListView  extends State<DetalleImagenLV>{
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: () {
-                Navigator.of(context).push(
+                Navigator.of(context).pop(
                     MaterialPageRoute(
                         builder: (context) {
                           return FirstScreen();

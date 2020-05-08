@@ -22,7 +22,8 @@ dependencies:
   image_downloader: ^0.19.2
   intl: 0.16.1
   uuid: 2.0.4
-
+  async: 2.4.1
+  rxdart: 0.24.0
 
 dev_dependencies:
   flutter_test:

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fuerzauy/first_screen.dart';
 import 'package:fuerzauy/sign_in.dart';
 import 'package:fuerzauy/departamento_salud.dart';
 import 'user_base.dart';
 
-int profile;
+int profile=-1;
 
 class UserProfilePage extends StatefulWidget {
   UserProfilePage() : super();
@@ -14,6 +15,8 @@ class UserProfilePage extends StatefulWidget {
 }
 
 class _UserProfilePage extends State<UserProfilePage> {
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,22 +75,32 @@ class _UserProfilePage extends State<UserProfilePage> {
                         ),
                       ]),
                 ),
-                RaisedButton(
+              RaisedButton(
                   onPressed: () {
-                    if (profile == 0) {
-                      createProfile(id, profile, '').whenComplete(() {
-                        if (true) {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return FirstScreen();
-                          }));
-                        }
-                      });
-                    } else {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return DepartamentoSaludPage();
-                      }));
+                    if(profile!=-1) {
+                      if (profile == 0) {
+                        createProfile(id, profile, '').whenComplete(() {
+                          if (true) {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return FirstScreen();
+                            }));
+                          }
+                        });
+                      } else {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return DepartamentoSaludPage();
+                        }));
+                      }
+                    }else{
+                      Fluttertoast.showToast(
+                          msg: "Selecciona a una opción por favor.",
+                          toastLength: Toast.LENGTH_LONG,
+                          gravity: ToastGravity.CENTER,
+                          backgroundColor: Colors.black,
+                          textColor: Colors.white,
+                          fontSize: 16.0);
                     }
                   },
                   color: Colors.deepPurple,

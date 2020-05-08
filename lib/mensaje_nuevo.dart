@@ -75,72 +75,89 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
           ),
         ),
         body:enviado==true?load(): SingleChildScrollView(
-            child: Card(
+
+            child: new Container(
+          height: 800,
           color: Colors.white,
           child: Column(
+
             children: <Widget>[
-              new Container(
-                padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
+              new Flexible(flex: 1,
+                child:Container(
+                  height: 100,
+                color: Colors.blue[200],
+                padding:const EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 10.0),
                 child:
-                    Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Text("A todos"),
-                  Checkbox(
-                    value: todos,
-                    onChanged: (bool newValue) {
-                      setState(() {
-                        todos = newValue;
-                        listaUsuarios = false;
-                        usuarioEnvio = null;
-                      });
-                    },
-                  ),
-                  Text("A funcionario/a en: "),
-                  new DropdownButton<String>(
-                    items: <String>[
-                      'Artigas',
-                      'Canelones',
-                      'Cerro Largo',
-                      'Colonia',
-                      'Durazno',
-                      'Flores',
-                      'Florida',
-                      'Lavalleja',
-                      'Maldonado',
-                      'Montevideo',
-                      'Paysandú',
-                      'Río Negro',
-                      'Rivera',
-                      'Rocha',
-                      'Salto',
-                      'San José',
-                      'Soriano',
-                      'Tacuarembó',
-                      'Treinta y Tres'
-                    ].map((String value) {
-                      return new DropdownMenuItem<String>(
-                        value: value,
-                        child: new Text(value),
-                      );
-                    }).toList(),
-                    hint: Text(departamento),
-                    onChanged: (String value) {
-                      departamento = value;
-                      setState(() {
-                        listaUsuarios = true;
-                        usuarioEnvio = null;
-                      });
-                    },
-                  )
+                    Wrap(direction: Axis.vertical, children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                    Text("A todos",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                    Checkbox(
+
+                      value: todos,
+                      onChanged: (bool newValue) {
+                        setState(() {
+                          todos = newValue;
+                          listaUsuarios = false;
+                          usuarioEnvio = null;
+                        });
+                      },
+                    ),
+                    Text("A funcionario/a en: ",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
+                    new DropdownButton<String>(
+                      items: <String>[
+                        'Artigas',
+                        'Canelones',
+                        'Cerro Largo',
+                        'Colonia',
+                        'Durazno',
+                        'Flores',
+                        'Florida',
+                        'Lavalleja',
+                        'Maldonado',
+                        'Montevideo',
+                        'Paysandú',
+                        'Río Negro',
+                        'Rivera',
+                        'Rocha',
+                        'Salto',
+                        'San José',
+                        'Soriano',
+                        'Tacuarembó',
+                        'Treinta y Tres'
+                      ].map((String value) {
+                        return new DropdownMenuItem<String>(
+                          value: value,
+                          child: new Text(value),
+                        );
+                      }).toList(),
+                      hint: Text(departamento),
+                      onChanged: (String value) {
+                        departamento = value;
+                        setState(() {
+                          listaUsuarios = true;
+                          usuarioEnvio = null;
+                        });
+                      },
+                    )
+                  ],)
+
                 ]),
-              ),
+              )),
               listaUsuarios == false && usuarioEnvio != null
-                  ? new Container(
+                  ? new Flexible(flex:2,
+                  child: Container(
+                    height: 200,
                       color: Colors.lightGreen[200],
                       child: itemUsuario,
-                    )
-                  : new Container(
+                    ))
+                  : new Flexible(flex:2,
+                child: Container(
+                  height: 200,
                       constraints: BoxConstraints(
-                          minWidth: 100, maxWidth: 500, maxHeight: 150),
+                          minWidth: 100, maxWidth: 500, maxHeight: 200),
                       child: FutureBuilder(
                         builder: (context, listado) {
                           if (listado.connectionState == ConnectionState.none &&
@@ -153,6 +170,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                               ? Container()
                               : new Container(
                                   child: ListView.builder(
+                                      padding: EdgeInsets.all(10.0),
                                       itemCount: listado.data.length,
                                       itemBuilder: (context, position) {
                                         User user = User.fromMap(
@@ -237,8 +255,11 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                         future: listadolXDepartamento(departamento),
                         //listadolXDepartamento(departamento),
                       ),
-                    ),
-              new Container(
+                    )),
+
+                new Flexible(flex:1,
+                child: Container(
+                  height: 50,
                   padding: const EdgeInsets.fromLTRB(8.0, 10.0, 8.0, 0.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,12 +268,16 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                         backgroundImage: NetworkImage(user.imageUrl),
                       ),
                     ],
-                  )),
-              new Container(
+                  ))),
+              new Flexible(flex:1,
+                child: Container(
+                  height: 50,
                 padding: const EdgeInsets.fromLTRB(50.0, 0, 8.0, 0),
                 // new line
 
-                child: Column(
+                child:
+
+                Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,8 +289,12 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                             hintText: 'Escribe tu mensaje aquí'),
                       ),
                     ]),
-              ),
-              enviado==true?load():new Container(
+              )),
+              enviado==true?load(): new Flexible(flex:4,
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(10.0,0.0,10.0,0.0),
+                  height: 300,
+
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
@@ -282,6 +311,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                           : Container(),
                       image != null && _uploadedFileURL == null
                           ? Container(
+
                               constraints:
                                   BoxConstraints(minWidth: 100, maxWidth: 500),
                               padding: EdgeInsets.only(right: 10),
@@ -301,6 +331,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                           ? IconButton(
                               icon: Icon(Icons.image),
                               iconSize: 60,
+                              color: Colors.deepPurple,
                               tooltip: 'Imagen',
                               onPressed: () {
                                 setState(() {
@@ -312,6 +343,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                           ? IconButton(
                               icon: Icon(Icons.photo_camera),
                               iconSize: 60,
+                              color: Colors.teal,
                               tooltip: 'Imagen',
                               onPressed: () {
                                 setState(() {
@@ -326,8 +358,10 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                             )
                           : Container(),
                     ]),
-              ),
-              new Container(
+              )),
+              new Flexible(flex:1,
+                child: Container(
+                  height: 100,
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -344,7 +378,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                     ),
                   ],
                 ),
-              )
+              ))
             ],
           ),
         )));
@@ -441,9 +475,9 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
       if (image != null) {
         uploadFile(usuarioEnvio);
       } else {
-        setState(() {
+
           uploadText(usuarioEnvio);
-        });
+        
       }
       clearSelection();
     } else {
