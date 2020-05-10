@@ -6,6 +6,7 @@ import 'package:fuerzauy/detalle_imagen_listview.dart';
 import 'package:fuerzauy/mensaje_base.dart';
 import 'package:fuerzauy/mensaje_nuevo.dart';
 import 'package:fuerzauy/shared_preferences.dart';
+import 'package:fuerzauy/validateInstagramScreen.dart';
 import 'mensaje.dart';
 import 'login_page.dart';
 import 'mensajes_recibidos.dart';
@@ -55,7 +56,8 @@ class FirstScreenState extends State<FirstScreen> {
         .snapshots();
 
     Stream instagram =
-    Firestore.instance.collection("instagram-fuerza-uruguay-WID").orderBy('timestamp',descending: true).limit(20).snapshots();
+    Firestore.instance.collection("instagram-fuerza-uruguay-WID").
+                      where('valido', isEqualTo: true).orderBy('timestamp',descending: true).limit(20).snapshots();
     getData() {
 
       return StreamGroup.merge(([instagram,mensajes]));
@@ -110,6 +112,22 @@ class FirstScreenState extends State<FirstScreen> {
                 height: 20.0,
                 color: Colors.grey,
               ),
+              Visibility(
+                visible: baseUsuario.user.userRole=="2",
+                child : ListTile(
+                  title: Text('Validar Instagram'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ValidateInstagramScreen("instagram-fuerza-uruguay-WID");
+                        },
+                      ),
+                    );
+                  },
+                )
+              ),//Visibility
             ],
           ),
         ),
