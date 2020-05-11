@@ -24,6 +24,9 @@ dependencies:
   uuid: 2.0.4
   async: 2.4.1
   rxdart: 0.24.0
+  http: 0.12.1
+  html: ^0.13.3+3
+
 
 dev_dependencies:
   flutter_test:

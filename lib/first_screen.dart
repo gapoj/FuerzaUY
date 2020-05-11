@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:async/async.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -6,8 +8,12 @@ import 'package:fuerzauy/detalle_imagen_listview.dart';
 import 'package:fuerzauy/mensaje_base.dart';
 import 'package:fuerzauy/mensaje_nuevo.dart';
 import 'package:fuerzauy/shared_preferences.dart';
+import 'package:html/dom.dart' as html;
+import 'package:html/parser.dart' as phtml;
+import 'package:http/http.dart' ;
 import 'mensaje.dart';
 import 'login_page.dart';
+import 'mensajes.dart';
 import 'mensajes_recibidos.dart';
 import 'sign_in.dart';
 import 'user_base.dart' as baseUsuario;
@@ -15,6 +21,7 @@ import 'upload_screen.dart';
 import 'feed_response_page.dart';
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
+
 
 
 class FirstScreen extends StatefulWidget {
@@ -33,19 +40,42 @@ class FirstScreenState extends State<FirstScreen> {
         duration: Duration(milliseconds: 500), curve: Curves.easeIn);
   }
 
+  /*Future<List<Mensaje>> initiate() async {
+    // Make API call to Hackernews homepage
+    var client = Client();
+    Response response = await client.get('https://www.instagram.com/explore/tags/fuerzauruguay?__a=1');
 
+
+
+
+
+    return parseMessages(response.body);
+  }
+  Mensajes msjs;
+  List<Mensaje> parseMessages(String responseBody) {
+    //final parsed = json.decode(responseBody);
+    msjs= Mensajes.fromJson(responseBody);
+    return msjs.items;
+   // return responseBody.map<Mensaje>((json) => Mensajes.fromJson(json)).toList();
+  }*/
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
+   // initiate();
 
   }
 
+  var url = 'https://example.com/whatsit/create';
 
+  Future<Response>listadoInstagram(Client client) async {
+    return client.get('https://www.instagram.com/explore/tags/fuerzauruguay/');
+  }
 
   @override
   Widget build(BuildContext context) {
     //String userRole = '1';
+
 
     Stream mensajes = Firestore.instance
         .collection('archives2')
@@ -149,7 +179,10 @@ class FirstScreenState extends State<FirstScreen> {
           ]) ,
           builder: (context,AsyncSnapshot<List<QuerySnapshot>> listado) {
 
-
+         //  if(initiate()!=null){
+           //  var ini=initiate();
+            // CombineLatestStream.list([mensajes,ini.asStream()]);
+          // }
             int lengthOfDocs=0;
             int querySnapShotCounter = 0;
             int counter = 0;

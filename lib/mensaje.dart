@@ -2,6 +2,8 @@
 
 
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -15,6 +17,7 @@ class Mensaje{
   final String id;
   final String imgProfile;
   final String userName;
+
 
   Mensaje({this.id,this.userName,this.mensaje, this.imageUrl, this.userId, this.videoUrl, this.fecha,this.imgProfile});
 
@@ -68,5 +71,49 @@ class Mensaje{
     );
   }
 
+  static fromMapString(Map<String,dynamic>json){
+    if(json==null) return null;
 
+
+    assert(json['imageUrl']!=null);
+    assert(json['firstComment']!=null);
+    assert(json['ownerUsername']!=null);
+    assert(json['timestamp']!=null);
+
+    return Mensaje(
+
+        userId:'',
+        mensaje:json['firstComment'],
+        imageUrl:json['imageUrl'],
+        id:'',
+        fecha:json['timestamp'],
+        videoUrl: '',
+        imgProfile: '',
+        userName: json['ownerUsername']
+    );
+  }
+
+  static fromJson(String str) => fromMapStringList(json.decode(str));
+  static fromMapStringList(Map<String,dynamic>json){
+    if(json==null) return null;
+
+
+    assert(json['edge']!=null);
+    assert(json['imageUrl']!=null);
+    assert(json['firstComment']!=null);
+    assert(json['ownerUsername']!=null);
+    assert(json['timestamp']!=null);
+
+    return Mensaje(
+
+        userId:'',
+        mensaje:json['firstComment'],
+        imageUrl:json['imageUrl'],
+        id:'',
+        fecha:json['timestamp'],
+        videoUrl: '',
+        imgProfile: '',
+        userName: json['ownerUsername']
+    );
+  }
 }
