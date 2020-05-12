@@ -128,21 +128,9 @@ class ValidateInstagramScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(1.0),
                 itemCount: listado.data.documents.length,
                 itemBuilder: (context, position) {
-                  instagramPost = InstagramPost.fromMap(listado.data.documents[position].data );
-                  return instagramWidget(instagramPost, context) ;
-
-                  //if (userRole == "0") {
-                    //if (instagramPost.imageUrl != "") {
-                     // return instagramWidget(instagramPost, context) ;
-                    }/* else if (mensaje.videoUrl != "") {
-                      return conVideo(mensaje, context);
-                    } else {
-                      return soloTexto(mensaje, context);
-                    }
-                  } else {
-                    return getRolSalud(mensaje, context);
-                  }*/
-                //}
+                    instagramPost = InstagramPost.fromMap(listado.data.documents[position].data );
+                    return instagramWidget(instagramPost, context) ;
+                  }
                 );
           },
 
@@ -170,8 +158,11 @@ class ValidateInstagramScreen extends StatelessWidget {
 
  void enviar(String documentId){
   Firestore.instance.collection(colectionName).document(documentId).updateData({'valido':true});
-
  }
+
+  void eliminar(String documentId){
+    Firestore.instance.collection(colectionName).document(documentId).delete();
+  }
 
   Widget instagramWidget(InstagramPost msj, BuildContext context) {
     return Column(children: <Widget>[
@@ -184,17 +175,6 @@ class ValidateInstagramScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                // Sección izquierda
-                /*new Container(
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: NetworkImage(msj.imgProfile),
-                        radius: 25.0,
-                      ),
-                    ],
-                  ),
-                ),*/
                 new Container(
                   padding: EdgeInsets.only(left: 12.0),
                   child: Row(
@@ -270,42 +250,36 @@ class ValidateInstagramScreen extends StatelessWidget {
                             decoration: TextDecoration.none,
                           ),
                         ),
-                        MaterialButton(
-                          minWidth: 100.0,
-                          height: 40.0,
-                          child: Text('Validar',
-                              style: TextStyle(color: Colors.white, fontSize: 25)),
-                          onPressed: (){enviar(msj.id);},
-                          color: Colors.green,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                        )
+                       Row(
+                         children:<Widget>[
+                           MaterialButton(
+                             minWidth: 100.0,
+                             height: 40.0,
+                             child: Text('Validar',
+                                 style: TextStyle(color: Colors.white, fontSize: 25)),
+                             onPressed: (){enviar(msj.id);},
+                             color: Colors.green,
+                             shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(5)),
+                           ),
+                           MaterialButton(
+                             minWidth: 100.0,
+                             height: 40.0,
+                             child: Text('Eliminar',
+                                 style: TextStyle(color: Colors.white, fontSize: 25)),
+                             onPressed: (){eliminar(msj.id);},
+                             color: Colors.redAccent,
+                             shape: RoundedRectangleBorder(
+                                 borderRadius: BorderRadius.circular(5)),
+                           )
+                         ]
+                       )
                       ],
                     ),
                   ),
                 ),
               ],
             )),
-       /* new Flexible(flex:1,
-            child: Container(
-              height: 100,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    minWidth: 100.0,
-                    height: 40.0,
-                    child: Text('Enviar',
-                        style: TextStyle(color: Colors.white, fontSize: 25)),
-                    onPressed: true == true ?enviar : null,
-                    color: Colors.cyan,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5)),
-                  ),
-                ],
-              ),
-            ))*/
       ]),
       Divider(
         height: 1.0,
