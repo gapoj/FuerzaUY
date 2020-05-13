@@ -388,7 +388,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
     enviado = true;
           if (todos == false) {
             uploaderImage.uploadFile(user.id, user.fullName, usuarioEnviar.id,
-                myController.text, user.imageUrl).then((value) => {
+                myController.text, user.imageUrl,user.userRole).then((value) => {
               setState(() {
                 mensajeEnviado = value;
                 enviado = true;
@@ -404,7 +404,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
                 fontSize: 16.0);
           } else {
             uploaderImage.uploadFile(user.id, user.fullName, '',
-                myController.text, user.imageUrl).then((value) => {
+                myController.text, user.imageUrl,user.userRole).then((value) => {
             setState(() {
             mensajeEnviado = value;
             enviado = true;
@@ -421,7 +421,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
     if (todos == false) {
       uploaderText
           .uploadText(user.id, usuarioEnviar.id, myController.text,
-              user.imageUrl, user.fullName)
+              user.imageUrl, user.fullName,user.userRole)
           .then((value) => {
         setState(() {
           mensajeEnviado = value;
@@ -433,7 +433,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
     } else {
       uploaderText
           .uploadText(
-              user.id, '', myController.text, user.imageUrl, user.fullName)
+              user.id, '', myController.text, user.imageUrl, user.fullName,user.userRole)
           .then((value) => {
                 setState(() {
                   mensajeEnviado = value;
@@ -477,7 +477,7 @@ class _MensajeEnvioState extends State<MensajeEnvio> with SingleTickerProviderSt
       } else {
 
           uploadText(usuarioEnvio);
-        
+
       }
       clearSelection();
     } else {

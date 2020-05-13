@@ -17,9 +17,12 @@ class Mensaje{
   final String id;
   final String imgProfile;
   final String userName;
+  final String userRole;
 
 
-  Mensaje({this.id,this.userName,this.mensaje, this.imageUrl, this.userId, this.videoUrl, this.fecha,this.imgProfile});
+  Mensaje({this.id,this.userName,this.mensaje, this.imageUrl, this.userId, this.videoUrl, this.fecha,this.imgProfile,this.userRole});
+
+
 
   static Mensaje fromMap(Map<String,dynamic>map) {
 
@@ -33,6 +36,7 @@ class Mensaje{
     assert(map['videoUrl']!=null);
     assert(map['imagenProfile']!=null);
     assert(map['userName']!=null);
+    assert(map['userRole']!=null);
     final fechaF = new DateFormat('dd-MM-yyyy');
     int valorFecha=int.parse(map['fecha']);
     String fechaMensaje=fechaF.format(new DateTime.fromMicrosecondsSinceEpoch(valorFecha*1000));
@@ -45,7 +49,8 @@ class Mensaje{
         fecha:fechaMensaje ,
         videoUrl: map['videoUrl'],
         imgProfile: map['imagenProfile'],
-        userName: map['userName']
+        userName: map['userName'],
+        userRole: map['userRole']
     );
   }
 

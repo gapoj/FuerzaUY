@@ -17,17 +17,19 @@ class FeedResponsePage extends StatefulWidget {
   String textoM;
   String mUserName;
 
-  FeedResponsePage(String userId,String userName, imgPerfilDestino, imagenUrl, textoMensaje) {
+  FeedResponsePage(String userId, String userName, imgPerfilDestino, imagenUrl,
+      textoMensaje) {
     idDestino = userId;
     imagenDestino = imgPerfilDestino;
     imagen = imagenUrl;
     textoM = textoMensaje;
-    mUserName=userName;
+    mUserName = userName;
   }
 
   @override
   _FeedResponsePageState createState() {
-    return _FeedResponsePageState(idDestino,mUserName, imagenDestino, imagen, textoM);
+    return _FeedResponsePageState(
+        idDestino, mUserName, imagenDestino, imagen, textoM);
   }
 }
 
@@ -46,22 +48,22 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
   String videoUrl;
   String mUserName;
   bool btnEnvioState;
-  String textAux;
-  bool imagen=false;
+  String textAux = "";
+  bool imagen = false;
   bool texto;
-
-
+  bool isLoading = false;
   final myController = TextEditingController();
 
-  _FeedResponsePageState(String idDestino,String userName, String imgPerfil, String imagen, String texto) {
+  _FeedResponsePageState(String idDestino, String userName, String imgPerfil,
+      String imagen, String texto) {
     mIdDestino = idDestino;
     imgDestinoUrl = imgPerfil;
     imagenPublicada = imagen;
     textoMensaje = texto;
-    mUserName=userName;
+    mUserName = userName;
   }
 
-  valorTextEditCallback(){
+  valorTextEditCallback() {
     setState(() {
       myController.text.length > 0
           ? btnEnvioState = true
@@ -73,13 +75,14 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
   void dispose() {
     super.dispose();
     myController.dispose();
-
   }
+
   @override
   void initState() {
     super.initState();
     myController.addListener((valorTextEditCallback));
   }
+
   @override
   Widget build(BuildContext context) {
     uploaderImage = new UploadImage();
@@ -100,6 +103,7 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () {
+              Navigator.of(context).pop();
               Navigator.of(context).push(MaterialPageRoute(builder: (context) {
                 return FirstScreen();
               }));
@@ -276,10 +280,13 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 25)),
-                                        onPressed: btnEnvioState == true ? enviar : null,
+                                        onPressed: btnEnvioState == true
+                                            ? enviar
+                                            : null,
                                         color: Colors.cyan,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5)),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                       ),
                                     ],
                                   ),
@@ -287,84 +294,114 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                               ],
                             ),
                           )
-                        :imagen==true?Card(
-                            color: Colors.lightBlue[200],
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(1.0),
-                                itemCount: 1,
-                                itemBuilder: (context, position) {
-                                  return Column(children: <Widget>[
-                                    new Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            CircleAvatar(
-                                              backgroundImage:
-                                                  NetworkImage(user.imageUrl),
-                                            ),
-                                            // Sección izquierda
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
+                        : isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : Card(
+                                color: Colors.lightBlue[200],
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(1.0),
+                                    itemCount: 1,
+                                    itemBuilder: (context, position) {
+                                      return Column(children: <Widget>[
+                                        new Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
-                                                Text(
-                                                  '10:21',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
+                                                CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      user.imageUrl),
+                                                ),
+                                                // Sección izquierda
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '10:21',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
-                                            ),
-                                          ],
-                                        )),
-                                    new Container(
-                                        child: Row(
-                                      children: <Widget>[
-                                        // Sección izquierda
+                                            )),
+                                        imagen == true
+                                            ? new Container(
+                                                child: Row(
+                                                children: <Widget>[
+                                                  // Sección izquierda
 
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                50, 10, 10, 10),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.network(_uploadedFileURL,
-                loadingBuilder: (BuildContext context, Widget child,
-                ImageChunkEvent loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                ? loadingProgress.cumulativeBytesLoaded /
-                loadingProgress.expectedTotalBytes
-                    : null,
-                ),);}),
-                                                Padding(
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .fromLTRB(
+                                                          50, 10, 10, 10),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Image.network(
+                                                              _uploadedFileURL,
+                                                              loadingBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Widget
+                                                                          child,
+                                                                      ImageChunkEvent
+                                                                          loadingProgress) {
+                                                            if (loadingProgress ==
+                                                                null)
+                                                              return child;
+                                                            return Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                value: loadingProgress
+                                                                            .expectedTotalBytes !=
+                                                                        null
+                                                                    ? loadingProgress
+                                                                            .cumulativeBytesLoaded /
+                                                                        loadingProgress
+                                                                            .expectedTotalBytes
+                                                                    : null,
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ))
+                                            : new Container(),
+                                        texto == true
+                                            ? new Container(
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.fromLTRB(
                                                           0, 20, 0, 0),
-                                                ),
-                                                Text(
-                                                  textAux,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    decoration:
-                                                        TextDecoration.none,
+                                                  child: Text(
+                                                    mensajeEnviado,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      decoration:
+                                                          TextDecoration.none,
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                  ]);
-                                })):new Container()
+                                              )
+                                            : new Container(),
+                                      ]);
+                                    }))
                   ],
                 );
               }),
@@ -554,11 +591,13 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 25)),
-                                        onPressed: btnEnvioState == true ? enviar : null,
+                                        onPressed: btnEnvioState == true
+                                            ? enviar
+                                            : null,
                                         color: Colors.cyan,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5)),
-
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                       ),
                                     ],
                                   ),
@@ -566,74 +605,112 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                               ],
                             ),
                           )
-                        : Card(
-                            color: Colors.lightBlue[200],
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(1.0),
-                                itemCount: 1,
-                                itemBuilder: (context, position) {
-                                  return Column(children: <Widget>[
-                                    new Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            CircleAvatar(
-                                              backgroundImage:
-                                                  NetworkImage(user.imageUrl),
-                                            ),
-                                            // Sección izquierda
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
+                        : isLoading
+                            ? load()
+                            : Card(
+                                color: Colors.lightBlue[200],
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(1.0),
+                                    itemCount: 1,
+                                    itemBuilder: (context, position) {
+                                      return Column(children: <Widget>[
+                                        new Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
-                                                Text(
-                                                  '10:21',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
+                                                CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      user.imageUrl),
+                                                ),
+                                                // Sección izquierda
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '10:21',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
-                                            ),
-                                          ],
-                                        )),
-                                    new Container(
-                                        child: Row(
-                                      children: <Widget>[
-                                        // Sección izquierda
+                                            )),
+                                        image != null
+                                            ? new Container(
+                                                child: Row(
+                                                children: <Widget>[
+                                                  // Sección izquierda
 
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                50, 10, 10, 10),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Image.network(_uploadedFileURL),
-                                                Padding(
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .fromLTRB(
+                                                          50, 10, 10, 10),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Image.network(
+                                                              _uploadedFileURL,
+                                                              loadingBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Widget
+                                                                          child,
+                                                                      ImageChunkEvent
+                                                                          loadingProgress) {
+                                                            if (loadingProgress ==
+                                                                null)
+                                                              return child;
+                                                            return Center(
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                value: loadingProgress
+                                                                            .expectedTotalBytes !=
+                                                                        null
+                                                                    ? loadingProgress
+                                                                            .cumulativeBytesLoaded /
+                                                                        loadingProgress
+                                                                            .expectedTotalBytes
+                                                                    : null,
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ))
+                                            : new Container(),
+                                        texto == true
+                                            ? new Container(
+                                                child: Padding(
                                                   padding:
                                                       const EdgeInsets.fromLTRB(
                                                           0, 20, 0, 0),
-                                                ),
-                                                Text(
-                                                  textAux,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    decoration:
-                                                        TextDecoration.none,
+                                                  child: Text(
+                                                    mensajeEnviado,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      decoration:
+                                                          TextDecoration.none,
+                                                    ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                  ]);
-                                })),
+                                              )
+                                            : new Container(),
+                                      ]);
+                                    }))
                   ],
                 );
               }),
@@ -814,11 +891,13 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 25)),
-                                        onPressed: btnEnvioState == true ? enviar : null,
+                                        onPressed: btnEnvioState == true
+                                            ? enviar
+                                            : null,
                                         color: Colors.cyan,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5)),
-
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                       ),
                                     ],
                                   ),
@@ -826,73 +905,87 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
                               ],
                             ),
                           )
-                        :texto==true?Card(
-                            color: Colors.lightBlue[200],
-                            child: ListView.builder(
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(1.0),
-                                itemCount: 1,
-                                itemBuilder: (context, position) {
-                                  return Column(children: <Widget>[
-                                    new Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            CircleAvatar(
-                                              backgroundImage:
-                                                  NetworkImage(user.imageUrl),
-                                            ),
-                                            // Sección izquierda
-                                            Row(
-                                              mainAxisSize: MainAxisSize.min,
+                        : imagen != null || texto == true
+                            ? Card(
+                                color: Colors.lightBlue[200],
+                                child: ListView.builder(
+                                    shrinkWrap: true,
+                                    padding: const EdgeInsets.all(1.0),
+                                    itemCount: 1,
+                                    itemBuilder: (context, position) {
+                                      return Column(children: <Widget>[
+                                        new Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
                                               children: <Widget>[
-                                                Text(
-                                                  '10:21',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
+                                                CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      user.imageUrl),
+                                                ),
+                                                // Sección izquierda
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      '10:21',
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
-                                            ),
-                                          ],
-                                        )),
-                                    new Container(
-                                        child: Row(
-                                      children: <Widget>[
-                                        // Sección izquierda
+                                            )),
+                                        mensajeEnviado != null
+                                            ? new Container(
+                                                child: Row(
+                                                children: <Widget>[
+                                                  // Sección izquierda
 
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                50, 10, 10, 10),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0, 20, 0, 0),
-                                                ),
-                                                Text(
-                                                  mensajeEnviado,
-                                                  style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    decoration:
-                                                        TextDecoration.none,
+                                                  Expanded(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .fromLTRB(
+                                                          50, 10, 10, 10),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .fromLTRB(
+                                                                    0,
+                                                                    20,
+                                                                    0,
+                                                                    0),
+                                                          ),
+                                                          Text(
+                                                            mensajeEnviado,
+                                                            style: TextStyle(
+                                                              fontSize: 20.0,
+                                                              decoration:
+                                                                  TextDecoration
+                                                                      .none,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                  ]);
-                                })):new Container()
+                                                ],
+                                              ))
+                                            : new Container(),
+                                      ]);
+                                    }))
+                            : new Container()
                   ],
                 );
               }),
@@ -900,42 +993,52 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
   }
 
   Widget uploadFile(String usuarioEnviar) {
-     textAux=myController.text;
-    uploaderImage.uploadFile(user.id, user.fullName, mIdDestino,
-        myController.text, user.imageUrl).then((value) => {
-       setState((){
-         _uploadedFileURL=value;
-        imagen=true;
-        texto=false;
-         enviado=true;
-
-       })
-    });
+    textAux = myController.text;
+    uploaderImage
+        .uploadFile(user.id, user.fullName, mIdDestino, myController.text,
+            user.imageUrl, user.userRole)
+        .then((value) => {
+              setState(() {
+                _uploadedFileURL = value;
+                imagen = true;
+                mensajeEnviado = myController.text;
+                enviado = true;
+                isLoading = false;
+                if (textAux.length > 0) {
+                  texto = true;
+                }
+              }),
+              Fluttertoast.showToast(
+                  msg: "Tu mensaje ha sido enviado a " + usuarioEnviar,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 18.0)
+            });
   }
 
   Widget uploadText(String usuarioEnviar) {
-
-      uploaderText
-          .uploadText(user.id, usuarioEnviar, myController.text,
-          user.imageUrl, user.fullName)
-          .then((value) => {
-        setState(() {
-          mensajeEnviado = value;
-          enviado = true;
-          texto=true;
-          imagen=false;
-          //myController.dispose();
-        }),
-        Fluttertoast.showToast(
-            msg: "Tu mensaje ha sido enviado a " +
-                usuarioEnviar,
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            backgroundColor: Colors.black,
-            textColor: Colors.white,
-            fontSize: 16.0)
-      });
-
+    uploaderText
+        .uploadText(user.id, usuarioEnviar, myController.text, user.imageUrl,
+            user.fullName, user.userRole)
+        .then((value) => {
+              setState(() {
+                mensajeEnviado = value;
+                enviado = true;
+                texto = true;
+                isLoading = false;
+                //imagen = false;
+                //myController.dispose();
+              }),
+              Fluttertoast.showToast(
+                  msg: "Tu mensaje ha sido enviado a " + usuarioEnviar,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  fontSize: 18.0)
+            });
   }
 
   void clearSelection() {
@@ -947,44 +1050,43 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
 
   void chooseFile() {
     uploaderImage.chooseFile().then((value) => {
-      setState(() {
-        image = value;
-        value != null ? btnEnvioState = true : btnEnvioState = false;
-      })
-    });
+          setState(() {
+            image = value;
+            value != null ? btnEnvioState = true : btnEnvioState = false;
+          })
+        });
   }
 
   void enviar() {
-
-      if (image != null) {
-        setState(() {
-          uploadFile(mUserName);
-        });
-
-      } else {
-        setState(() {
-          uploadText(mUserName);
-        });
-      }
-      clearSelection();
+    setState(() {
+      enviado = true;
+      isLoading = true;
+    });
+    if (image != null) {
+      setState(() {
+        uploadFile(mUserName);
+      });
+    } else {
+      setState(() {
+        uploadText(mUserName);
+      });
     }
+    clearSelection();
   }
-  Widget load() {
-    return Scaffold(
-      body: Container(
-        color: Colors.white,
+}
 
-          child: Column(
-
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              SizedBox(height: 30),
-              new CircularProgressIndicator()
-            ],
-          ),
-        ),
-
-    );
-  }
-
+Widget load() {
+  return Scaffold(
+    body: Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          SizedBox(height: 30),
+          new CircularProgressIndicator()
+        ],
+      ),
+    ),
+  );
+}

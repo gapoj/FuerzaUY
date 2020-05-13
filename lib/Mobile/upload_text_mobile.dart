@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 class UploadTextMobile implements UploadText{
 
   @override
-  Future<String> uploadText(String idUser, String idDestino, String mensaje,String imageProfile,String userName) async {
+  Future<String> uploadText(String idUser, String idDestino, String mensaje,String imageProfile,String userName,String userRole) async {
     await Firestore.instance.runTransaction((transaction) async {
 
       await transaction
@@ -22,6 +22,7 @@ class UploadTextMobile implements UploadText{
         'imagenProfile':imageProfile,
         'videoUrl':'',
         'userName':userName,
+        'userRole':userRole,
 
 
       });

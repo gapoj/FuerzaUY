@@ -16,7 +16,7 @@ class UploadImageMobile implements UploadImage {
     return Image.file(image);
   }
 
-  Future<String> uploadFile(String idUser,String userName, String idDestino,String mensaje,String imageProfile) async {
+  Future<String> uploadFile(String idUser,String userName, String idDestino,String mensaje,String imageProfile, String userRole) async {
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child('chats/${Path.basename(UploadImageMobile.imageMobile.path)}');
@@ -39,6 +39,7 @@ class UploadImageMobile implements UploadImage {
         'idDestino':idDestino,
         'imagenProfile':imageProfile,
         'videoUrl':'',
+        'userRole':userRole,
 
       });
     });

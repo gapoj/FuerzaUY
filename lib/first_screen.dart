@@ -8,9 +8,11 @@ import 'package:fuerzauy/detalle_imagen_listview.dart';
 import 'package:fuerzauy/mensaje_base.dart';
 import 'package:fuerzauy/mensaje_nuevo.dart';
 import 'package:fuerzauy/shared_preferences.dart';
+import 'package:fuerzauy/user.dart';
 import 'package:html/dom.dart' as html;
 import 'package:html/parser.dart' as phtml;
 import 'package:http/http.dart' ;
+import 'package:fuerzauy/validateInstagramScreen.dart';
 import 'mensaje.dart';
 import 'login_page.dart';
 import 'mensajes.dart';
@@ -68,15 +70,13 @@ class FirstScreenState extends State<FirstScreen> {
 
   var url = 'https://example.com/whatsit/create';
 
-  Future<Response>listadoInstagram(Client client) async {
-    return client.get('https://www.instagram.com/explore/tags/fuerzauruguay/');
-  }
+
 
   @override
   Widget build(BuildContext context) {
     //String userRole = '1';
 
-
+    User user;
     Stream mensajes = Firestore.instance
         .collection('archives2')
         .where('idDestino', isEqualTo: "")
@@ -84,8 +84,8 @@ class FirstScreenState extends State<FirstScreen> {
         .limit(20)
         .snapshots();
 
-    Stream instagram =
-    Firestore.instance.collection("instagram-fuerza-uruguay-WID").orderBy('timestamp',descending: true).limit(20).snapshots();
+    Stream instagram = Firestore.instance.collection("instagram-fuerza-uruguay-WID").
+                      where('valido', isEqualTo: true).orderBy('timestamp',descending: true).limit(20).snapshots();
     getData() {
 
       return StreamGroup.merge(([instagram,mensajes]));
@@ -140,6 +140,22 @@ class FirstScreenState extends State<FirstScreen> {
                 height: 20.0,
                 color: Colors.grey,
               ),
+              Visibility(
+                visible: baseUsuario.user.userRole=="2",
+                child : ListTile(
+                  title: Text('Validar Instagram'),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return ValidateInstagramScreen("instagram-fuerza-uruguay-WID");
+                        },
+                      ),
+                    );
+                  },
+                )
+              ),//Visibility
             ],
           ),
         ),
@@ -229,9 +245,10 @@ class FirstScreenState extends State<FirstScreen> {
                            listado.data[querySnapShotCounterAux].documents[counterAux].data);
 
                        counterAux = counterAux + 1 ;
+
                        return desdeInstagram(mensaje, context);
                      }
-                      if (baseUsuario.user.userRole == "0") {
+                      if (mensaje.userRole == "0") {
                         if (mensaje.imageUrl != "") {
                           return conImagen(mensaje, context);
                         } else if (mensaje.videoUrl != "") {
