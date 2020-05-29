@@ -1,12 +1,8 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fuerzauy/first_screen.dart';
-import 'package:fuerzauy/init_app.dart';
 import 'package:fuerzauy/shared_preferences.dart';
 import 'package:fuerzauy/user_base.dart';
 
-///import 'package:firebase_auth/firebase_auth.dart';
 import 'login_page.dart';
 
 void main() => runApp(MyApp());
@@ -42,7 +38,7 @@ class _MyAppState extends State<MyApp> {
                   return splash();
                 }
                 if (userId.hasData) {
-                  if(userId.data!=null) {
+                  if (userId.data != null) {
                     checkUser(userId.data).whenComplete(() {
                       Navigator.of(context)
                           .push(MaterialPageRoute(builder: (context) {
@@ -53,16 +49,16 @@ class _MyAppState extends State<MyApp> {
                         }
                       }));
                     });
-                  }else{
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context){
+                  } else {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
                       return LoginPage();
                     }));
                   }
-                }else{
+                } else {
                   return LoginPage();
                 }
                 return splash();
-
               }),
         ));
   }
@@ -77,8 +73,7 @@ class _MyAppState extends State<MyApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Image(
-                image: AssetImage('assets/logo.png'),
-              ),
+                  image: AssetImage('assets/logo.png'), width: double.infinity),
             ],
           ),
         ),
@@ -86,4 +81,3 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-

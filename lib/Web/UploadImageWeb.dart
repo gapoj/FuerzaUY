@@ -4,24 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:fuerzauy/Common/UploadImage.dart';
 import 'package:uuid/uuid.dart';
 import 'package:firebase/firebase.dart' as fb;
-//import 'package:image_picker_web/image_picker_web.dart';
+import 'package:image_picker_web/image_picker_web.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-/*class UploadImageWeb implements UploadImage {
+class UploadImageWeb implements UploadImage {
   static Uint8List imagebytes;
 
   Future<Widget> chooseFile() async {
-    //UploadImageWeb.imagebytes =
-       // await ImagePickerWeb.getImage(outputType: ImageType.bytes);
-  //  Image fromPicker = Image.memory(UploadImageWeb.imagebytes);
-   // if (fromPicker != null) {
-     // return fromPicker;
-    //} else {
+    UploadImageWeb.imagebytes =
+        await ImagePickerWeb.getImage(outputType: ImageType.bytes);
+    Image fromPicker = Image.memory(UploadImageWeb.imagebytes);
+    if (fromPicker != null) {
+      return fromPicker;
+    } else {
       return null;
     }
   }
 
-  Future<String> uploadFile(String idUser, String idDestino,String mensaje) async {
+  Future<String> uploadFile(String idUser, String userName, String idDestino,
+      String mensaje, String imageProfile, String userRole) async {
     Uuid uuid = Uuid();
     fb.StorageReference storageReference = fb
         .storage()
@@ -33,14 +34,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
     Firestore.instance.runTransaction((transaction) async {
       await transaction
           .set(Firestore.instance.collection("archives2").document(), {
-        'fecha': '',
+        'fecha': DateTime.now().millisecondsSinceEpoch.toString(),
         'id': '',
-        'imageUrl':fileURL,
-        'mensaje':mensaje,
-        'userId':idUser,
-        'idDestino':idDestino,
-        'videoUrl':'',
-
+        'imageUrl': fileURL,
+        'mensaje': mensaje,
+        'userId': idUser,
+        'userName': userName,
+        'idDestino': idDestino,
+        'imagenProfile': imageProfile,
+        'videoUrl': '',
+        'userRole': userRole,
       });
     });
 
@@ -48,4 +51,4 @@ import 'package:cloud_firestore/cloud_firestore.dart';
   }
 }
 
-UploadImage getUploadImage() => UploadImageWeb();*/
+UploadImage getUploadImage() => UploadImageWeb();
