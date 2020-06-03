@@ -1020,7 +1020,7 @@ class _FeedResponsePageState extends State<FeedResponsePage> {
 
   Widget uploadText(String usuarioEnviar) {
     uploaderText
-        .uploadText(user.id, usuarioEnviar, myController.text, user.imageUrl,
+        .uploadText(user.id, mIdDestino, myController.text, user.imageUrl,
             user.fullName, user.userRole)
         .then((value) => {
               setState(() {

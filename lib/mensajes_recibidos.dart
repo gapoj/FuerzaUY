@@ -370,9 +370,7 @@ class MensajesRecibidos extends StatelessWidget {
 
   Widget soloTexto(Mensaje mensaje, BuildContext context) {
     return Column(
-
         children: <Widget>[
-
           Column(children: <Widget>[
             new Container(
                 color: Colors.white,
@@ -385,21 +383,17 @@ class MensajesRecibidos extends StatelessWidget {
                     // Sección izquierda
                     new Container(
                       child: Row(
-
                         children: [
                           CircleAvatar(
                             backgroundImage: NetworkImage(mensaje.imgProfile),
                             radius: 20.0,
                           ),
-
                         ],
                       ),
-
                     ),
                     new Container(
                       padding: EdgeInsets.only(left: 2.0),
                       child: Row(
-
                         children: [
                           Text(
                             mensaje.userName,
